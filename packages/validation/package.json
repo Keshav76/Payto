@@ -1,0 +1,11 @@
+{
+  "name": "@repo/validation",
+  "version": "1.0.0",
+  "exports": {
+    "./signin": "./src/signin.ts",
+    "./signup": "./src/signup.ts"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}

@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   Int                  @id @default(autoincrement())
+  email                String?              @unique
+  name                 String
+  number               String               @unique
+  verified             Boolean              @default(false)
+  password             String
+  balance              Int                  @default(0)
+  locked               Int                  @default(0)
+  auth_type            AuthType             @default(Email)
+  onRampTransactions   OnRampTransaction[]
+  offRampTransactions  OffRampTransaction[]
+  incomingTransactions P2PTransaction[]     @relation("FromUserTransaction")
+  outgoingTransactions P2PTransaction[]     @relation("ToUserTransaction")
+}
+
+model OnRampTransaction {
+  id        Int               @id @default(autoincrement())
+  amount    Int
+  token     String            @unique
+  status    TransactionStatus @default(Processing)
+  provider  String
+  startTime DateTime          @default(now())
+  userId    Int
+  user      User              @relation(fields: [userId], references: [id])
+}
+
+model OffRampTransaction {
+  id        Int               @id @default(autoincrement())
+  amount    Int
+  token     String            @unique
+  provider  String
+  startTime DateTime          @default(now())
+  userId    Int
+  user      User              @relation(fields: [userId], references: [id])
+}
+
+model P2PTransaction {
+  id       Int                 @id @default(autoincrement())
+  time     DateTime            @default(now())
+  amount   Int
+  message  String              @default("")
+  fromId   Int
+  from     User                @relation(name: "FromUserTransaction", fields: [fromId], references: [id])
+  toId     Int
+  to       User                @relation(name: "ToUserTransaction", fields: [toId], references: [id])
+  category TransactionCategory @default(Miscellaneous)
+}
+
+enum AuthType {
+  Email
+  Google
+  Github
+}
+
+enum TransactionStatus {
+  Success
+  Failed
+  Processing
+}
+
+enum TransactionCategory {
+  Food
+  Recharge
+  Bill
+  Transportation
+  Entertainment
+  Household
+  Utility
+  Miscellaneous
+}
