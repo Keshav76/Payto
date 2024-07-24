@@ -5,6 +5,7 @@ interface SelectProps {
     value: string;
   }[];
 }
+
 function Select({ changeHandler, options }: SelectProps) {
   return (
     <select
