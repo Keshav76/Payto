@@ -20,4 +20,5 @@ function Select({ changeHandler, options }: SelectProps) {
     </select>
   );
 }
+
 export default Select;
